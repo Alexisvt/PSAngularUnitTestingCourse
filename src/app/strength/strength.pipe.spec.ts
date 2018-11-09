@@ -11,7 +11,7 @@ describe('StrengtPipe', () => {
     const val = pipe.transform(5);
 
     // assert
-    expect(val).toEqual('5 (weak)');
+    expect(val).toBe('5 (weak)');
   });
 
   it('should display to strong if strength s 10', () => {
@@ -22,6 +22,6 @@ describe('StrengtPipe', () => {
     const val = pipe.transform(10);
 
     // assert
-    expect(val).toEqual('10 (strong)');
+    expect(val).toBe('10 (strong)');
   });
 });
