@@ -87,18 +87,39 @@ describe('HeroesComponent (shallow tests)', () => {
   it(`should call heroService.deleteHero when the Hero component's
   delete button is clicked`, () => {
     // arrange
-    mockHeroService.getHeroes.and.returnValue(of(HEROES));
     spyOn(component, 'deleteHero');
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
 
     // act, running ngOnInit
     fixture.detectChanges();
 
     // in this case we are not clicking the button
-    // instead we are just executing the delete event directly, we are not
+    // instead we are just emitting the delete event directly, we are not
     // executing the method on the child either.
     const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
     heroComponents[0].triggerEventHandler('delete', null);
 
     expect(component.deleteHero).toHaveBeenCalledWith(HEROES[0]);
+  });
+
+  it('should add a new hero to the hero list when the add button is clicked', () => {
+    // arrange
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    fixture.detectChanges();
+    const name = 'Mr. Ice';
+    mockHeroService.addHero.and.returnValue(of({ id: 5, name, strength: 4 }));
+    const inputElement: HTMLInputElement = fixture.debugElement.query(By.css('input'))
+      .nativeElement;
+    const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
+
+    // act
+    inputElement.value = name;
+    addButton.triggerEventHandler('click', null);
+    // we are doing this step to display the new hero in th HTML
+    fixture.detectChanges();
+
+    // assert
+    const heroText = fixture.debugElement.query(By.css('ul')).nativeElement.textContent;
+    expect(heroText).toContain(name);
   });
 });
