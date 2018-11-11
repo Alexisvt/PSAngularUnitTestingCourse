@@ -1,4 +1,4 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Directive, HostListener, Input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { of } from 'rxjs';
@@ -6,6 +6,19 @@ import { of } from 'rxjs';
 import { HeroService } from '../hero.service';
 import { HeroComponent } from '../hero/hero.component';
 import { HeroesComponent } from './heroes.component';
+
+@Directive({
+  selector: '[routerLink]',
+})
+export class RouterLinkStubDirective {
+  @Input() routerLink: any;
+  navigatedTo: any = null;
+
+  @HostListener('click')
+  onClick() {
+    this.navigatedTo = this.routerLink;
+  }
+}
 
 describe('HeroesComponent (shallow tests)', () => {
   let fixture: ComponentFixture<HeroesComponent>;
@@ -22,8 +35,8 @@ describe('HeroesComponent (shallow tests)', () => {
     mockHeroService = jasmine.createSpyObj(['getHeroes', 'addHero', 'deleteHero']);
 
     TestBed.configureTestingModule({
-      declarations: [HeroesComponent, HeroComponent],
-      schemas: [NO_ERRORS_SCHEMA],
+      declarations: [HeroesComponent, HeroComponent, RouterLinkStubDirective],
+      // schemas: [NO_ERRORS_SCHEMA],
       providers: [
         {
           provide: HeroService,
@@ -121,5 +134,19 @@ describe('HeroesComponent (shallow tests)', () => {
     // assert
     const heroText = fixture.debugElement.query(By.css('ul')).nativeElement.textContent;
     expect(heroText).toContain(name);
+  });
+
+  it('should have the correct route for the first hero', () => {
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    fixture.detectChanges();
+    const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+
+    const routerLink = heroComponents[0]
+      .query(By.directive(RouterLinkStubDirective))
+      .injector.get(RouterLinkStubDirective);
+
+    heroComponents[0].query(By.css('a')).triggerEventHandler('click', null);
+
+    expect(routerLink.navigatedTo).toBe('/detail/1');
   });
 });
