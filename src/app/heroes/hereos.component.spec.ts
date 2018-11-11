@@ -27,7 +27,7 @@ describe('HeroesComponent', () => {
       component.heroes = HEROES;
 
       // act
-      component.delete(HEROES[2]);
+      component.deleteHero(HEROES[2]);
 
       // assert
       expect(component.heroes.length).toBe(2);
@@ -40,7 +40,7 @@ describe('HeroesComponent', () => {
       component.heroes = HEROES;
 
       // act
-      component.delete(HEROES[2]);
+      component.deleteHero(HEROES[2]);
 
       // assert
       // here we are checking not only that the system is calling the correct

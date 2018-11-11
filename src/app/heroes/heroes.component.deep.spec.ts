@@ -54,7 +54,7 @@ describe('HeroesComponent (shallow tests)', () => {
   delete button is clicked`, () => {
     // arrange
     mockHeroService.getHeroes.and.returnValue(of(HEROES));
-    spyOn(component, 'delete');
+    spyOn(component, 'deleteHero');
 
     // act, running ngOnInit
     fixture.detectChanges();
@@ -64,6 +64,23 @@ describe('HeroesComponent (shallow tests)', () => {
       .query(By.css('Button'))
       .triggerEventHandler('click', { stopPropagation: () => {} });
 
-    expect(component.delete).toHaveBeenCalledWith(HEROES[0]);
+    expect(component.deleteHero).toHaveBeenCalledWith(HEROES[0]);
+  });
+
+  it(`should call heroService.deleteHero when the Hero component's
+  delete button is clicked`, () => {
+    // arrange
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    spyOn(component, 'deleteHero');
+
+    // act, running ngOnInit
+    fixture.detectChanges();
+
+    // in this case we are not clicking the button
+    // instead we are just executing the delete method in child component directly
+    const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    (<HeroComponent>heroComponents[0].componentInstance).delete.emit(undefined);
+
+    expect(component.deleteHero).toHaveBeenCalledWith(HEROES[0]);
   });
 });
