@@ -49,4 +49,21 @@ describe('HeroesComponent (shallow tests)', () => {
       expect(heroComponent.componentInstance.hero.id).toBe(HEROES[index].id);
     });
   });
+
+  it(`should call heroService.deleteHero when the Hero component's
+  delete button is clicked`, () => {
+    // arrange
+    mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    spyOn(component, 'delete');
+
+    // act, running ngOnInit
+    fixture.detectChanges();
+
+    const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    heroComponents[0]
+      .query(By.css('Button'))
+      .triggerEventHandler('click', { stopPropagation: () => {} });
+
+    expect(component.delete).toHaveBeenCalledWith(HEROES[0]);
+  });
 });
